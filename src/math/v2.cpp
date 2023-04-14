@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "v2.h"
 #include <cmath>
 
@@ -96,6 +96,7 @@ double v2::dot(v2 a) const
 	return x * a.x + y * a.y + z * a.z;
 }
 
+//вращятельное влияние j-той силы на i-тою точку - (rj x fj x ri)/I 
 v2 v2::cross(v2 a) const{
 	v2 ans;
 	ans.x = y * a.z - z * a.y;

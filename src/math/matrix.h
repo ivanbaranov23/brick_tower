@@ -18,6 +18,7 @@ public:
 	Vector get_col(int ind);
 
 	void set_row(int ind, Vector row);
+	Vector get_row(int ind);
 
 	//void swap_col(int id1, int id2);
 	void swap_row(int id1, int id2);

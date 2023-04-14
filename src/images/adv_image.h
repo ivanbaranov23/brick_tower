@@ -1,7 +1,7 @@
 #pragma once
 #include "my_image.h"
-#include "box.h"
-#include "force.h"
+#include "../math/box.h"
+#include "../physics/force.h"
 
 class Adv_image: public Image
 {

@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#include "Dynamic_box.h"
+//#include "stdafx.h"
+#include "dynamic_box.h"
 
-#include "utilities.h"
+#include "../utilities.h"
 
 Dynamic_box::Dynamic_box(Box b, double m) :Box(b), mass(m) {
 	moment_inertia = mass / 12.0 * size.length_squared();
@@ -39,4 +39,21 @@ Vector Dynamic_box::get_matrix_row(int corner_number)
 		ans[force.length_id] = linear + rotation;
 	}
 	return ans;
+}
+
+v2 Dynamic_box::get_total_force(){
+	v2 total = v2();
+	for (int i = 0; i < forces.size(); i++)
+	{
+		total += forces[i].second.get();
+	}
+	return total;
+}
+double Dynamic_box::get_total_rotation(){
+	double total = 0.0;
+	for (int i = 0; i < forces.size(); i++)
+	{
+		total += forces[i].first.cross(forces[i].second.get()).z;
+	}
+	return total / moment_inertia;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 //includes
-#include "v2.h"
+#include "math/v2.h"
 
 #include <cmath>
 #include <vector>

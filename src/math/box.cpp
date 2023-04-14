@@ -1,8 +1,8 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "box.h"
 #include <algorithm>
 
-#include "utilities.h"
+#include "../utilities.h"
 
 v2 Box::to_local(v2 v)
 {
@@ -152,4 +152,15 @@ v2 Box::get_normal(v2 v)
 	}
 
 	return v2();
+}
+
+Box Box::get_AABB(){
+	double left = std::min({get_corner(0).x, get_corner(1).x, get_corner(2).x, get_corner(3).x});
+	double right = std::max({get_corner(0).x, get_corner(1).x, get_corner(2).x, get_corner(3).x});
+	double top = std::min({get_corner(0).y, get_corner(1).y, get_corner(2).y, get_corner(3).y});
+	double bottom = std::max({get_corner(0).y, get_corner(1).y, get_corner(2).y, get_corner(3).y});
+
+	v2 AABB_pos = v2(left + right, top + bottom) / 2.0;
+	v2 AABB_size = v2(right - left, bottom - top);
+	return {AABB_pos, AABB_size};
 }

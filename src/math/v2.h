@@ -1,5 +1,6 @@
 #pragma once
 
+//вектор 2d
 struct v2{
 public:
 	double x;

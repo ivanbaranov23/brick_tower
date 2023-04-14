@@ -1,8 +1,9 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "lemke_solver.h"
 
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 
 
@@ -175,7 +176,6 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 			cout
 				<< "no new pivots (ray termination)"
 				<< std::endl;
-			//cout << "MobyLCPSolver::SolveLcpLemke() exiting" << std::endl;
 			f = Vector(n, 0);
 			return false;
 		}
@@ -296,27 +296,27 @@ Vector solve_linear(Matrix & A, Vector b)
 	// PA = LU
 	// C = L + U - E
 	
-	//n - размерность исходной матрицы
+	//n - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	const int n = A.w;
 
 	Matrix C = A;
 
-	//загружаем в матрицу P единичную матрицу
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ P пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	Matrix P;
 	P.set_up_as_Identity(n);
 
 	for (int i = 0; i < n; i++) {
-		//поиск опорного элемента
+		//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		double pivotValue = 0;
 		int pivot = -1;
 		for (int row = i; row < n; row++) {
-			if (fabs(C.values[i][row]) > pivotValue) {
-				pivotValue = fabs(C.values[i][row]);
+			if (abs(C.values[i][row]) > pivotValue) {
+				pivotValue = abs(C.values[i][row]);
 				pivot = row;
 			}
 		}
 		if (pivotValue != 0) {
-			//меняем местами i-ю строку и строку с опорным элементом
+			//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ i-пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			P.swap_row(pivot, i);
 			C.swap_row(pivot, i);
 			for (int j = i + 1; j < n; j++) {

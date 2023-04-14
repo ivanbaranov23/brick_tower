@@ -1,5 +1,5 @@
 #pragma once
-#include "box.h"
+#include "../math/box.h"
 #include "force.h"
 #include <vector>
 #include <utility>
@@ -22,11 +22,6 @@ struct Dynamic_box: public Box
 	bool dynamic = true;
 
 	std::vector<std::pair<v2, Force>> forces;
-	
-	//int corners[4] = { -1, -1, -1, -1 };
-
-	double angular_velocity = 0;
-	double total_force_moment = 0;
 
 	Dynamic_box(Box b, double m);
 	~Dynamic_box();
@@ -34,5 +29,7 @@ struct Dynamic_box: public Box
 	void add_force(v2 gpos, Force force);
 	Vector get_matrix_row(int corner_number);
 
+	v2 get_total_force();
+	double get_total_rotation();
 };
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "matrix.h"
 
 Matrix::Matrix()
@@ -23,7 +23,6 @@ void Matrix::set_col(int ind, Vector col)
 		values[ind][i] = col[i];
 	}
 }
-
 Vector Matrix::get_col(int ind)
 {
 	Vector ans;
@@ -39,6 +38,14 @@ void Matrix::set_row(int ind, Vector row)
 	for (int i = 0; i < w; i++) {
 		values[i][ind] = row[i];
 	}
+}
+Vector Matrix::get_row(int ind)
+{
+	Vector ans;
+	for (int i = 0; i < w; i++) {
+		ans.push_back(values[i][ind]);
+	}
+	return ans;
 }
 
 

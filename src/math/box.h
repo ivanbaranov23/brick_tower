@@ -19,11 +19,16 @@ struct Box
 	v2 get_local_x();
 	v2 get_local_y();
 
+	//углы - 0---1
+	//       |   |
+	//       3---2
 	v2 get_corner(int i);
 
 	bool intersect(Box& b);
 	bool intersect(v2 v);
+
 	v2 get_normal(v2 v);
 
+	Box get_AABB();
 };
 

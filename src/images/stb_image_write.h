@@ -148,6 +148,8 @@ LICENSE
 
 */
 
+#define sprintf_s(buf, ...) snprintf((buf), sizeof(buf), __VA_ARGS__)
+
 #ifndef INCLUDE_STB_IMAGE_WRITE_H
 #define INCLUDE_STB_IMAGE_WRITE_H
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "v2.h"
+#include "../math/v2.h"
 #include <vector>
 
 class Force
@@ -17,6 +17,6 @@ public:
 	v2 get();
 
 	void assign_length(int n);
-	void add_new_length();
+	void add_new_length(double def_length = 0.0);
 	void make_opposite_to(Force &f);
 };

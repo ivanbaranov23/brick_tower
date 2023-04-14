@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#include "Adv_image.h"
+//#include "stdafx.h"
+#include "adv_image.h"
 
-#include "utilities.h"
+#include "../utilities.h"
 
 #include <algorithm>
 
@@ -14,8 +14,14 @@ void Adv_image::fill(Pixel p){
 }
 
 void Adv_image::draw_rect(Box& b, Pixel p){
-	for (int x = 0; x < w; x++) {
-		for (int y = 0; y < h; y++) {
+	Box AABB = b.get_AABB();
+	int left = std::max(AABB.pos.x - AABB.size.x / 2 - 1, 0.0);
+	int right = std::min(AABB.pos.x + AABB.size.x / 2 + 1, double(w));
+	int top = std::max(AABB.pos.y - AABB.size.y / 2 - 1, 0.0);
+	int bottom = std::min(AABB.pos.y + AABB.size.y / 2 + 1, double(h));
+
+	for (int x = left; x < right; x++) {
+		for (int y = top; y < bottom; y++) {
 			if (b.intersect(v2(x, y)))
 				set(x, y, p);
 		}

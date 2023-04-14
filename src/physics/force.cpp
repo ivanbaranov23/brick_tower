@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "force.h"
 
 std::vector<double> Force::lengths = {};
@@ -21,10 +21,10 @@ void Force::assign_length(int n)
 	length_id = n;
 }
 
-void Force::add_new_length()
+void Force::add_new_length(double def_length)
 {
 	length_id = lengths.size();
-	lengths.push_back(1.0);
+	lengths.push_back(def_length);
 }
 
 void Force::make_opposite_to(Force & f)
