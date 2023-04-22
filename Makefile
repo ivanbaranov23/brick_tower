@@ -16,17 +16,23 @@ matrix.o: src/math/matrix.h src/math/matrix.cpp
 	g++ -c src/math/matrix.cpp
 
 
-physics: dynamic_box force
+physics: dynamic_box.o force.o
 
-dynamic_box: src/physics/dynamic_box.h src/physics/dynamic_box.cpp box.o
+dynamic_box.o: src/physics/dynamic_box.h src/physics/dynamic_box.cpp box.o
 	g++ -c src/physics/dynamic_box.cpp
 
-force: src/physics/force.h src/physics/force.cpp v2.o
+force.o: src/physics/force.h src/physics/force.cpp v2.o
 	g++ -c src/physics/force.cpp
 
 
-images: adv_image
+images: adv_image.o my_image.o
 
-adv_image: src/images/adv_image.h src/images/adv_image.cpp src/images/my_image.h src/images/my_image.cpp
-	g++ -c src/images/adv_image.cpp src/images/my_image.cpp
+adv_image.o: src/images/adv_image.h src/images/adv_image.cpp
+	g++ -c src/images/adv_image.cpp
 
+my_image.o: src/images/my_image.h src/images/my_image.cpp
+	g++ -c src/images/my_image.cpp
+
+
+clean:
+	rm *.o

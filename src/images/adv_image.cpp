@@ -75,3 +75,41 @@ void Adv_image::draw_force(v2 g_pos, Force& force, double scale) {
 	draw_line(g_pos, g_pos + force.get() * scale, 2.0);
 
 }
+
+void Adv_image::draw_circle(v2 center, int dir, Pixel p){
+	if (dir == 0) return;
+
+	const double radius = 15.0;
+	const double width = 2.0;
+	const double length = 5.0;
+
+	int left = std::max(0, int(center.x - width / 2));
+	int right = std::min(w, int(center.x + width / 2 + radius));
+	int top = std::max(0, int(center.y - width / 2 - radius));
+	int bottom = std::min(h, int(center.y + width / 2));
+
+	for (int x = left; x < right; x++)
+		for (int y = top; y < bottom; y++)
+		{
+			int dx = x - left;
+			int dy = bottom - y;
+			if (abs(sqrt(dx*dx + dy*dy) - radius) < width / 2)
+				set(x, y, p);
+		}
+	
+	if (dir == 1){
+		int x = center.x + radius - width / 2;
+		int y = center.y;
+		v2 pos(x, y);
+		draw_line(pos, pos + v2(-1.0, -1.0) * length, width, p);
+		draw_line(pos, pos + v2(+1.0, -1.0) * length, width, p);
+	}
+	else{
+		int x = center.x;
+		int y = center.y - radius + width / 2;
+		v2 pos(x, y);
+		draw_line(pos, pos + v2(1.0, -1.0) * length, width, p);
+		draw_line(pos, pos + v2(1.0, +1.0) * length, width, p);
+	}
+	
+}

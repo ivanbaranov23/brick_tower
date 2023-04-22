@@ -93,7 +93,7 @@ void read_input(string file_name, std::vector<Dynamic_box>& boxes, Config& confi
 };
 
 
-int main()
+int main(int argc, char* argv[])
 {
 	//                plan
 	//read from json
@@ -103,12 +103,20 @@ int main()
 	//draw                     -kinda done
 
 	int mode;
-	cout << "input mode (0 or 1, 0 for straight task): ";
-	cin >> mode;
+	if (argc > 1)
+		mode = atoi(argv[1]);
+	else{
+		cout << "input mode (0 or 1, 0 for straight task): ";
+		cin >> mode;
+	}
 
     string file_name;
-    cout << "input file name (abc will become in/abc.json): ";
-	cin >> file_name;
+	if (argc > 2)
+		file_name = string(argv[2]);
+	else{
+	    cout << "input file name (abc will become in/abc.json): ";
+		cin >> file_name;
+	}
 	file_name = "in/" + file_name + ".json";
 
 	Config config;
@@ -139,6 +147,7 @@ int main()
 			double total_rotation = boxes[i].get_total_rotation();
 			
 			im2.draw_arrow(boxes[i].pos, boxes[i].pos + total_accel * config.scale, 2.0);
+			im2.draw_circle(boxes[i].pos, sgn(total_rotation));
 			cout << "box #" << i << "\ntotal force (" << total_accel.x << ", " << total_accel.y << ")\nrotation acceleration: " << total_rotation << endl;
 		}
         im2.write("out/all_forces.png");
@@ -224,7 +233,6 @@ int main()
 					g + boxes[i].forces[j].second.get() * config.scale,
 					2.0
 				);
-				//cout << g.x << " " << g.y << " " << boxes[i].forces[j].second.direction.x << " " << boxes[i].forces[j].second.direction.y << endl;
 			}
 			break;
 		case 1:

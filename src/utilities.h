@@ -11,6 +11,10 @@
 const double pi = 3.14159265358979323846;
 const v2 gravity_v{ 0, 9.8 };
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 //v2 consts
 const v2 v2_LEFT = v2(-1.0, 0.0);
 const v2 v2_RIGHT = v2(1.0, 0.0);
