@@ -9,7 +9,7 @@
 
 #include "src/json.hpp"
 #include <fstream>
-
+#include <exception>
 
 
 using json = nlohmann::json;
@@ -64,6 +64,10 @@ Dynamic_box read_box(json box, int mode) {
 }
 void read_input(string file_name, std::vector<Dynamic_box>& boxes, Config& config, int mode) {
 	ifstream file(file_name);
+	if (!file.is_open()){
+		cout << "Can't open file " << file_name << endl;
+		throw std::invalid_argument("bad file path");
+	}
 	json j = json::parse(file);
 	
 	config.w = j["width"];
