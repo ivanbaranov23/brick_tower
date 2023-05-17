@@ -144,7 +144,13 @@ bool Box::intersect(v2 v){
 
 v2 Box::get_normal(v2 v)
 {
-	v2 local_v = (to_local(v) / size).normalized();
+	v2 local_v = to_local(v);
+	//cout << local_v.x << " " << local_v.y << endl;
+	local_v /= size;
+	//cout << local_v.x << " " << local_v.y << endl;
+	local_v = local_v.normalized();
+	
+	//cout << local_v.x << " " << local_v.y << endl << endl;
 
 	for (int i = 0; i < 4; i++) {
 		if (normals[i].dot(local_v) > sqrt(2.0) / 2.0)

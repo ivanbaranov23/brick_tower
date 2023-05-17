@@ -138,13 +138,13 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 			for (unsigned i = 0; i < basis.size(); i++) {
 				str += " " + to_string(basis[i]);
 			}
-			cout << "basic variables:" << str << std::endl;
-			cout << "leaving: " << leaving << " t:" << t << std::endl;
+			//cout << "basic variables:" << str << std::endl;
+			//cout << "leaving: " << leaving << " t:" << t << std::endl;
 		}
 
 		// check whether done; if not, get new entering variable
 		if (leaving == t) {
-			cout << "-- solved LCP successfully!" << std::endl;
+			//cout << "-- solved LCP successfully!" << std::endl;
 			finish_lemke(A, b, x, f, basis);
 			
 			return true;
@@ -160,7 +160,6 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 		}
 		dl = Be;
 
-		// See comments above on the possibility of this solve failing.
 		dl = solve_linear(Bl, dl);
 
 		// find new leaving variable
@@ -173,10 +172,9 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 
 		// check for no new pivots; ray termination
 		if (j_.empty()) {
-			cout
-				<< "no new pivots (ray termination)"
-				<< std::endl;
-			f = Vector(n, 0);
+			//cout << "no new pivots (ray termination)" << std::endl;
+			finish_lemke(A, b, x, f, basis);
+			//f = Vector(n, 0);
 			return false;
 		}
 
@@ -258,8 +256,8 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 		x[lvindex] = ratio;
 		Bl.set_col(lvindex, Be);
 		*iiter = entering;
-		cout << " -- pivoting: leaving index=" << lvindex
-			<< "  entering index=" << entering << std::endl;
+		//cout << " -- pivoting: leaving index=" << lvindex
+		//	<< "  entering index=" << entering << std::endl;
 	}
 
 	finish_lemke(A, b, x, f, basis);

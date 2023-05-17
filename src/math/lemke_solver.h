@@ -29,6 +29,6 @@ void finish_lemke(Matrix A, const Vector& b, const Vector& x, Vector& f, vector<
 Vector solve_linear(Matrix& A, Vector b);
 
 
-const bool log_result = true;
-const bool log_intermediate = true;
+const bool log_result = false;
+const bool log_intermediate = false;
 const double zero_tolerance = 1e-7;

@@ -107,8 +107,10 @@ v2 v2::cross(v2 a) const{
 
 v2 v2::normalized() const
 {
-	if (*this)
-		return (*this) / length();
+	if ((fabs(x) > 1e-7) || (fabs(y) > 1e-7)){
+		double l = length();
+		return {x / l, y / l};
+	}
 	return v2();
 }
 
@@ -119,5 +121,5 @@ v2 v2::rotated(double a) const
 
 v2::operator bool() const
 {
-	return (abs(x) > 1e-7) || (abs(y) > 1e-7);
+	return (fabs(x) > 1e-7) || (fabs(y) > 1e-7);
 }

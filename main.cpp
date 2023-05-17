@@ -25,7 +25,7 @@ struct Config {
 
 
 Dynamic_box read_box(json box, int mode) {
-    if (mode == 1){
+    /*if (mode == 1){
         v2 pos = v2(box[0], box[1]);
 	    v2 size = v2(box[2], box[3]);
 	    double mass = box[4];
@@ -34,7 +34,7 @@ Dynamic_box read_box(json box, int mode) {
 	    if (box.size() == 6)
 		    rot = box[5];
         return Dynamic_box({ pos, size, rot }, mass);
-    }
+    }*/
     
     v2 pos = v2(box["pos"][0], box["pos"][1]);
     v2 size = v2(box["size"][0], box["size"][1]);
@@ -247,6 +247,7 @@ int main(int argc, char* argv[])
 			im.draw_arrow(boxes[i].pos, boxes[i].pos + total_force * config.scale, 3.0);
 			break;
 		case 2:
+
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
 				v2 g = boxes[i].to_global(boxes[i].forces[j].first);
 				im.draw_arrow(
@@ -268,10 +269,10 @@ int main(int argc, char* argv[])
 
 
 	}
-	//cout << "Forces:" << endl;
-	//for (int i = 0; i < Force::lengths.size(); i++) {
-	//	cout << Force::lengths[i] << endl;
-	//}
+	cout << "Forces:" << endl;
+	for (int i = 0; i < Force::lengths.size(); i++) {
+		cout << Force::lengths[i] << endl;
+	}
 
 	file_name = "out/" + config.name + ".png";
 	im.write(file_name.c_str());
