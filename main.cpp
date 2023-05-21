@@ -230,6 +230,11 @@ int main(int argc, char* argv[])
 
 		switch (config.style) {
 		case 0:
+			im.draw_arrow(
+					boxes[i].pos,
+					boxes[i].pos + gravity_v * boxes[i].mass * config.scale,
+					2.0
+			);
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
 				v2 g = boxes[i].to_global(boxes[i].forces[j].first);
 				im.draw_arrow(
@@ -240,14 +245,18 @@ int main(int argc, char* argv[])
 			}
 			break;
 		case 1:
-			total_force = gravity_v;
+			total_force = gravity_v * boxes[i].mass;
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
 				total_force += boxes[i].forces[j].second.get();
 			}
 			im.draw_arrow(boxes[i].pos, boxes[i].pos + total_force * config.scale, 3.0);
 			break;
 		case 2:
-
+			im.draw_arrow(
+					boxes[i].pos,
+					boxes[i].pos + gravity_v * config.scale,
+					2.0
+			);
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
 				v2 g = boxes[i].to_global(boxes[i].forces[j].first);
 				im.draw_arrow(

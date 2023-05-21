@@ -116,7 +116,7 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 
 
 	// pivot in the artificial variable
-	*iiter = t;  // replace w var with _z0 in basic indices
+	*iiter = t; 
 	u.resize(n);
 	for (unsigned i = 0; i < n; i++) {
 		u[i] = (x[i] < 0) ? 1 : 0;
@@ -195,12 +195,11 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 		xj = select_sub_vector(x, j_);
 		dj = select_sub_vector(dl, j_);
 
-		// compute minimal ratios x(j) + EPS_DOUBLE ./ d(j), d > 0
+		
 		result = Vector(xj.size());
 		double theta = (xj[0] + zero_tolerance) / dj[0];
 
-		// find indices of minimal ratios, d> 0
-		//   divide _x(j) ./ d(j) -- remove elements above the minimum ratio
+		
 		for (int i = 0; i < result.size(); i++) {
 			result[i] = (xj[i] + zero_tolerance) / dj[i];
 			if (theta > result[i])
@@ -294,17 +293,15 @@ Vector solve_linear(Matrix & A, Vector b)
 	// PA = LU
 	// C = L + U - E
 	
-	//n - ����������� �������� �������
 	const int n = A.w;
 
 	Matrix C = A;
 
-	//��������� � ������� P ��������� �������
 	Matrix P;
 	P.set_up_as_Identity(n);
 
 	for (int i = 0; i < n; i++) {
-		//����� �������� ��������
+		
 		double pivotValue = 0;
 		int pivot = -1;
 		for (int row = i; row < n; row++) {
@@ -314,7 +311,6 @@ Vector solve_linear(Matrix & A, Vector b)
 			}
 		}
 		if (pivotValue != 0) {
-			//������ ������� i-� ������ � ������ � ������� ���������
 			P.swap_row(pivot, i);
 			C.swap_row(pivot, i);
 			for (int j = i + 1; j < n; j++) {

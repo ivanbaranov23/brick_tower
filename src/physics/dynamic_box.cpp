@@ -35,6 +35,7 @@ Vector Dynamic_box::get_matrix_row(int corner_number)
 		double linear = normal.dot(force.direction) / mass;
 
 		double rotation = normal.dot( force_pos.cross(force.direction.cross(local_pos)) ) / moment_inertia;
+		cout << rotation << endl;
 		
 		ans[force.length_id] = linear + rotation;
 	}
