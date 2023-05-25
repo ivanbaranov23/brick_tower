@@ -1,5 +1,6 @@
 //#include "stdafx.h"
 #include "force.h"
+#include "../utilities.h"
 
 std::vector<double> Force::lengths = {};
 
@@ -12,8 +13,9 @@ Force::~Force()
 }
 
 
-v2 Force::get(){
-	return direction.normalized() * lengths[length_id];
+v2 Force::get(double mu){
+	v2 dir = direction.normalized() + direction.normalized().rotated(pi / 2.0) * mu;
+	return dir * lengths[length_id];
 }
 
 void Force::assign_length(int n)

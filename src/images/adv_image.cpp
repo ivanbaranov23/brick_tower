@@ -71,10 +71,6 @@ void Adv_image::draw_arrow(v2 p1, v2 p2, double width, Pixel p) {
 	draw_line(p2, p2 + dir.normalized().rotated(-pi * 0.75) * 10.0, width, p);
 }
 
-void Adv_image::draw_force(v2 g_pos, Force& force, double scale) {
-	draw_line(g_pos, g_pos + force.get() * scale, 2.0);
-
-}
 
 void Adv_image::draw_circle(v2 center, int dir, Pixel p){
 	if (dir == 0) return;

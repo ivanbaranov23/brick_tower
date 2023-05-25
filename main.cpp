@@ -18,6 +18,7 @@ using json = nlohmann::json;
 struct Config {
 	int w, h;
 	int style;
+	float mu;
 	string name;
 	double scale;
 	vector<int>filter;
@@ -78,6 +79,11 @@ void read_input(string file_name, std::vector<Dynamic_box>& boxes, Config& confi
     	config.scale = j["scale"];
     else
         config.scale = 1.0;
+	
+	 if (j.find("mu") != j.end())
+    	config.mu = j["mu"];
+    else
+        config.mu = 0.0;
 
 	if ((j.find("filter") != j.end()) && (j["filter"].size() != 0)) {
 		for (json::iterator it = j["filter"].begin(); it != j["filter"].end(); ++it) {
@@ -239,7 +245,7 @@ int main(int argc, char* argv[])
 				v2 g = boxes[i].to_global(boxes[i].forces[j].first);
 				im.draw_arrow(
 					g,
-					g + boxes[i].forces[j].second.get() * config.scale,
+					g + boxes[i].forces[j].second.get(config.mu) * config.scale,
 					2.0
 				);
 			}
@@ -261,7 +267,7 @@ int main(int argc, char* argv[])
 				v2 g = boxes[i].to_global(boxes[i].forces[j].first);
 				im.draw_arrow(
 					g,
-					g + boxes[i].forces[j].second.get() / boxes[i].mass * config.scale,
+					g + boxes[i].forces[j].second.get(config.mu) / boxes[i].mass * config.scale,
 					4.0
 				);
 

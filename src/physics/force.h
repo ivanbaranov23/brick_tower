@@ -14,7 +14,7 @@ public:
 	Force(v2 dir);
 	~Force();
 
-	v2 get();
+	v2 get(double mu = 0.0);
 
 	void assign_length(int n);
 	void add_new_length(double def_length = 0.0);
