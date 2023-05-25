@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
 		case 1:
 			total_force = gravity_v * boxes[i].mass;
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
-				total_force += boxes[i].forces[j].second.get();
+				total_force += boxes[i].forces[j].second.get(config.mu);
 			}
 			im.draw_arrow(boxes[i].pos, boxes[i].pos + total_force * config.scale, 3.0);
 			break;
@@ -274,9 +274,9 @@ int main(int argc, char* argv[])
 			}
 			break;
 		case 3:
-			total_force = gravity_v;
+			total_force = gravity_v * boxes[i].mass;
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
-				total_force += boxes[i].forces[j].second.get();
+				total_force += boxes[i].forces[j].second.get(config.mu);
 			}
 			im.draw_arrow(boxes[i].pos, boxes[i].pos + total_force / boxes[i].mass * config.scale, 3.0);
 			break;

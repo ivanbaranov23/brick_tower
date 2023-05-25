@@ -1,0 +1,25 @@
+{
+    "width": 300,
+    "height": 300,
+  
+    "name": "unstable",
+  
+    "style": 1,
+    "scale": 4.5,
+    "mu": -0.3,
+  
+    "floor": {
+      "pos": [150, 150], 
+      "size": [300, 50], 
+      "rotation": 0.6,
+      "mass": 1
+    },
+    "boxes": [
+      { 
+        "pos": [150, 100], 
+        "size": [100, 50], 
+        "rotation": 0.6,
+        "mass": 1
+      }
+    ]
+  }
