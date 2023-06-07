@@ -145,8 +145,8 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 			for (unsigned i = 0; i < basis.size(); i++) {
 				str += " " + to_string(basis[i]);
 			}
-			//cout << "basic variables:" << str << std::endl;
-			//cout << "leaving: " << leaving << " t:" << t << std::endl;
+			cout << "basic variables:" << str << std::endl;
+			cout << "leaving: " << leaving << " t:" << t << std::endl;
 		}
 
 		// check whether done; if not, get new entering variable
@@ -172,7 +172,7 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 		// find new leaving variable
 		vector<int> j_;
 		for (int i = 0; i < dl.size(); i++) {
-			if (dl[i] > 0.0) {
+			if (dl[i] > zero_tolerance) {
 				j_.push_back(i);
 			}
 		}
@@ -209,10 +209,12 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 		
 		for (int i = 0; i < result.size(); i++) {
 			result[i] = (xj[i] + zero_tolerance) / dj[i];
+			//cout << result[i] << " ";
 			if (theta > result[i])
 				theta = result[i];
 			result[i] = xj[i] / dj[i];
 		}
+		//cout << endl << "theta " << theta << endl; 
 
 		for (iiter = j_.begin(), idx = 0; iiter != j_.end();) {
 			if (result[idx++] <= theta) {
@@ -233,7 +235,8 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 		// if j is empty, then likely the zero tolerance is too low
 		if (j_.empty()) {
 			cout << "zero tolerance too low" << std::endl;
-			f = Vector(n, 0.0);
+			finish_lemke(A, b, x, f, basis);
+			//f = Vector(n, 0.0);
 			return false;
 		}
 

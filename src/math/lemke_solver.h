@@ -31,5 +31,5 @@ Vector solve_linear(Matrix& A, Vector b);
 
 
 const bool log_result = false;
-const bool log_intermediate = false;
+const bool log_intermediate = true;
 const double zero_tolerance = 1e-7;
