@@ -4,9 +4,11 @@
   
     "name": "stable",
   
-    "style": 1,
+    "style": 0,
     "scale": 4.5,
-    "mu": -0.4,
+    "mu": 0.9,
+    "epsilon": 0.1,
+    "delta":0.01,
   
     "floor": {
       "pos": [150, 150], 

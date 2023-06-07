@@ -23,6 +23,8 @@ public:
 	//void swap_col(int id1, int id2);
 	void swap_row(int id1, int id2);
 
+	void set_friction_row(int ind, double mu);
+
 	Vector operator*(Vector v);
 	void operator*=(double s);
 };

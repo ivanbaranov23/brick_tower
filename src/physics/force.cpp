@@ -1,6 +1,7 @@
 //#include "stdafx.h"
 #include "force.h"
 #include "../utilities.h"
+#include "dynamic_box.h"
 
 std::vector<double> Force::lengths = {};
 
@@ -13,8 +14,10 @@ Force::~Force()
 }
 
 
-v2 Force::get(double mu){
-	v2 dir = direction.normalized() + direction.normalized().rotated(pi / 2.0) * mu;
+v2 Force::get(){
+	if (static_force)
+		return direction;
+	v2 dir = direction; //.normalized();// + direction.normalized().rotated(pi / 2.0) * mu;
 	return dir * lengths[length_id];
 }
 
@@ -35,4 +38,12 @@ void Force::make_opposite_to(Force & f)
 	if (f.length_id == -1)
 		f.add_new_length();
 	assign_length(f.length_id);
+
+	opposite_force = &f;
+	f.opposite_force = this;
+}
+
+void Force::set_friction(v2 mu){
+	direction += mu;
+	opposite_force->direction -= mu;
 }

@@ -153,7 +153,7 @@ v2 Box::get_normal(v2 v)
 	//cout << local_v.x << " " << local_v.y << endl << endl;
 
 	for (int i = 0; i < 4; i++) {
-		if (normals[i].dot(local_v) > sqrt(2.0) / 2.0)
+		if (normals[i].dot(local_v) > sqrt(2.0) / 2.0 - 1e-5)
 			return normals[i].rotated(rotation);
 	}
 

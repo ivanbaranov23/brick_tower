@@ -40,6 +40,13 @@ Vector operator*(Vector v, double a)
 	return ans;
 }
 
+double operator*(Vector a, Vector b){
+	double ans = 0.0;
+	for (int i = 0; i < a.size(); i++)
+		ans += a[i] * b[i];
+	return ans;
+}
+
 Vector select_sub_vector(Vector s, vector<int> w)
 {
 	Vector ans;

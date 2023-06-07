@@ -58,6 +58,15 @@ void Matrix::swap_row(int id1, int id2)
 	}
 }
 
+
+void Matrix::set_friction_row(int ind, double mu){
+	Vector row(w, 0.0);
+	row[ind-1] = mu;
+	row[ind] = -1.0;
+	set_row(ind, row);
+}
+
+
 Vector Matrix::operator*(Vector v)
 {
 	Vector ans;

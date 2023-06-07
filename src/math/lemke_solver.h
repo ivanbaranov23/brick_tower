@@ -18,6 +18,7 @@ Vector operator*(Vector v, double a);
 
 Vector select_sub_vector(Vector s, vector<int> w);
 
+double operator*(Vector a, Vector b);
 
 //minimaze fT * (A*f+b)
 //f>=0

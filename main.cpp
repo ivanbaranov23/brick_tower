@@ -18,7 +18,9 @@ using json = nlohmann::json;
 struct Config {
 	int w, h;
 	int style;
-	float mu;
+	double mu;
+	double epsilon;
+	double delta;
 	string name;
 	double scale;
 	vector<int>filter;
@@ -61,7 +63,16 @@ Dynamic_box read_box(json box, int mode) {
         }
             
     }
+	Force g(gravity_v * b.mass);
+	g.static_force = true;
+	b.add_force_local_pos(v2(), g);
     return b;
+}
+
+double read_with_default(json& where, string what, double def){
+	if (where.find(what) != where.end())
+    	return where[what];
+    return def;
 }
 void read_input(string file_name, std::vector<Dynamic_box>& boxes, Config& config, int mode) {
 	ifstream file(file_name);
@@ -75,15 +86,12 @@ void read_input(string file_name, std::vector<Dynamic_box>& boxes, Config& confi
 	config.h = j["height"];
 	config.style = j["style"];
 	config.name = j["name"];
-    if (j.find("scale") != j.end())
-    	config.scale = j["scale"];
-    else
-        config.scale = 1.0;
-	
-	 if (j.find("mu") != j.end())
-    	config.mu = j["mu"];
-    else
-        config.mu = 0.0;
+
+	config.scale = read_with_default(j, "scale", 1.0);
+	config.mu = read_with_default(j, "mu", 0.0);
+	config.epsilon = read_with_default(j, "epsilon", 1.0);
+	config.delta = read_with_default(j, "delta", 0.1);
+
 
 	if ((j.find("filter") != j.end()) && (j["filter"].size() != 0)) {
 		for (json::iterator it = j["filter"].begin(); it != j["filter"].end(); ++it) {
@@ -101,6 +109,52 @@ void read_input(string file_name, std::vector<Dynamic_box>& boxes, Config& confi
 		boxes.push_back(read_box(*it, mode));
 	}
 };
+
+
+void try_configuration(Config &config, vector<Dynamic_box>& boxes){
+		int n = Force::lengths.size();
+		cout << "n=" << n << endl;
+		Matrix A;
+		Vector b(n, 0.0);
+		A.set_up_as_Identity(n);
+
+		for (int i = 0; i < boxes.size(); i++) {
+			for (int k = 0; k < 4; k++) {
+				if (boxes[i].corners[k].id != -1) {
+					Dynamic_box* collider = boxes[i].corners[k].colliding;
+					v2 normal = boxes[i].corners[k].normal;
+					Vector this_box_row = boxes[i].get_matrix_row(normal, boxes[i].corners[k].global());
+					Vector other_box_row = collider->get_matrix_row(normal, boxes[i].corners[k].global());
+
+					A.set_row(boxes[i].corners[k].id, this_box_row - other_box_row);
+					//A.set_friction_row(boxes[i].corners[k].id + 1, config.mu);
+					b[boxes[i].corners[k].id] = normal.dot(gravity_v);
+					if (collider->dynamic)
+						b[boxes[i].corners[k].id] -= normal.dot(gravity_v);
+				}
+			}
+		}
+		cout << "A:               b:" << endl;
+		for(int i = 0; i < n; i++){
+			for(int j = 0; j < n; j++)
+				cout << A.values[j][i] << " ";
+			cout << "                    " << b[i] << endl;
+		}
+		cout << endl;
+
+		Vector f = Vector(n, 0.0);
+		solve_lemke(A, b, f);
+		Vector w = A * f + b;
+		double score = f * w;
+		for (int i = 0; i < f.size(); i++)
+			cout << f[i] << "\t";
+		cout << endl;
+		for (int i = 0; i < f.size(); i++)
+			cout << w[i] << "\t";
+		cout << endl << endl;
+		cout << "score " << score << endl << endl;
+		Force::lengths = f;
+}
 
 
 int main(int argc, char* argv[])
@@ -176,47 +230,37 @@ int main(int argc, char* argv[])
 					if (!boxes[j].intersect(c))continue;
 
 					v2 normal = boxes[j].get_normal(c);
+					cout << "collision " << i << " and " << j << " normal " << normal.x << " " << normal.y << endl;
+					//v2 fric = normal.rotated(pi/2.0) * config.mu;
 
 					Force f1(normal), f2(normal);
+					//Force ffric1(fric), ffric2(fric);
 					f2.make_opposite_to(f1);
+					f1.parent = &boxes[i].corners[k];
+
+					//ffric2.make_opposite_to(ffric1);
+
+
 					boxes[i].add_force(c, f1);
-					if (boxes[j].dynamic)
+					if (boxes[j].dynamic){
 						boxes[j].add_force(c, f2);
+						//boxes[j].add_force(c, ffric2);
+					}
 
 					boxes[i].corners[k].id = Force::lengths.size() - 1;
-					boxes[i].corners[k].normal += normal;
+					boxes[i].corners[k].normal = normal;
+					boxes[i].corners[k].colliding = &boxes[j];
+					//boxes[i].add_force(c, ffric1);
+					//forces.push_back(boxes[i].get_last_force());
 				}
 			}
 		}
 
 
 		//get matrix
-		int n = Force::lengths.size();
-		Matrix A;
-		Vector b(n, 0.0);
-		A.set_up_as_Identity(n);
+		try_configuration(config, boxes);
 
-		for (int i = 0; i < boxes.size(); i++) {
-			for (int k = 0; k < 4; k++) {
-				if (boxes[i].corners[k].id != -1) {
-					cout << boxes[i].corners[k].id << " " << boxes[i].corners[k].normal.x << " " << boxes[i].corners[k].normal.y << endl;
-					A.set_row(boxes[i].corners[k].id, boxes[i].get_matrix_row(k));
-					b[boxes[i].corners[k].id] = boxes[i].corners[k].normal.dot(gravity_v);
-				}
-			}
-		}
-
-		for (int y = 0; y < A.h; y++) {
-			for (int x = 0; x < A.w; x++) {
-				cout << A.values[x][y] << "\t";
-			}
-			cout << endl;
-		}
-
-		Vector forces = Vector(n, 0.0);
-		solve_lemke(A, b, forces);
-		Force::lengths = forces;
-
+		cout << endl;
 	}
 	Adv_image im(config.w, config.h);
 	im.fill({ 255, 255, 255 });
@@ -227,6 +271,7 @@ int main(int argc, char* argv[])
 		im.draw_rect(boxes[i], colors[i % 5]);
 
 	v2 total_force;
+	cout << endl;
 	for (int i = 0; i < boxes.size(); i++)
 	{
 		if (find(config.filter.begin(), config.filter.end(), i) != config.filter.end())
@@ -234,49 +279,53 @@ int main(int argc, char* argv[])
 		if (!boxes[i].dynamic)
 			continue;
 
+		cout << i << "th box rotation " << boxes[i].get_total_rotation() << endl;
+
 		switch (config.style) {
 		case 0:
-			im.draw_arrow(
+			/*im.draw_arrow(
 					boxes[i].pos,
 					boxes[i].pos + gravity_v * boxes[i].mass * config.scale,
 					2.0
-			);
+			);*/
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
 				v2 g = boxes[i].to_global(boxes[i].forces[j].first);
 				im.draw_arrow(
 					g,
-					g + boxes[i].forces[j].second.get(config.mu) * config.scale,
+					g + boxes[i].forces[j].second.get() * 30.0,
 					2.0
 				);
+				//cout << boxes[i].forces[j].second.direction.x << " " << boxes[i].forces[j].second.direction.y << endl;
 			}
 			break;
 		case 1:
-			total_force = gravity_v * boxes[i].mass;
+			total_force = v2();// gravity_v * boxes[i].mass;
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
-				total_force += boxes[i].forces[j].second.get(config.mu);
+				total_force += boxes[i].forces[j].second.get();
 			}
 			im.draw_arrow(boxes[i].pos, boxes[i].pos + total_force * config.scale, 3.0);
+			cout << i << "th box total force " << total_force.x << " " << total_force.y << endl; 
 			break;
 		case 2:
-			im.draw_arrow(
+			/*im.draw_arrow(
 					boxes[i].pos,
 					boxes[i].pos + gravity_v * config.scale,
 					2.0
-			);
+			);*/
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
 				v2 g = boxes[i].to_global(boxes[i].forces[j].first);
 				im.draw_arrow(
 					g,
-					g + boxes[i].forces[j].second.get(config.mu) / boxes[i].mass * config.scale,
+					g + boxes[i].forces[j].second.get() / boxes[i].mass * config.scale,
 					4.0
 				);
 
 			}
 			break;
 		case 3:
-			total_force = gravity_v * boxes[i].mass;
+			total_force = v2(); //gravity_v * boxes[i].mass;
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
-				total_force += boxes[i].forces[j].second.get(config.mu);
+				total_force += boxes[i].forces[j].second.get();
 			}
 			im.draw_arrow(boxes[i].pos, boxes[i].pos + total_force / boxes[i].mass * config.scale, 3.0);
 			break;
@@ -284,7 +333,7 @@ int main(int argc, char* argv[])
 
 
 	}
-	cout << "Forces:" << endl;
+	cout << endl << "Forces:" << endl;
 	for (int i = 0; i < Force::lengths.size(); i++) {
 		cout << Force::lengths[i] << endl;
 	}
