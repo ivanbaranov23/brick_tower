@@ -59,7 +59,7 @@ Vector select_sub_vector(Vector s, vector<int> w)
 bool solve_lemke(Matrix A, Vector b, Vector & f)
 {
 	const int n = b.size();
-	const int max_iteration = (1000 > 50 * n) ? (1000) : (50 * n);
+	const int max_iteration = (5000 > 50 * n) ? (5000) : (50 * n);
 
 	if (n == 0) {
 		f.resize(0);
@@ -151,7 +151,7 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 
 		// check whether done; if not, get new entering variable
 		if (leaving == t) {
-			//cout << "-- solved LCP successfully!" << std::endl;
+			cout << "-- solved LCP successfully!" << std::endl;
 			finish_lemke(A, b, x, f, basis);
 			
 			return true;
@@ -172,14 +172,14 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 		// find new leaving variable
 		vector<int> j_;
 		for (int i = 0; i < dl.size(); i++) {
-			if (dl[i] > zero_tolerance) {
+			if (dl[i] > 0.0) {
 				j_.push_back(i);
 			}
 		}
 
 		// check for no new pivots; ray termination
 		if (j_.empty()) {
-			//cout << "no new pivots (ray termination)" << std::endl;
+			cout << "no new pivots (ray termination)" << std::endl;
 			finish_lemke(A, b, x, f, basis);
 			//f = Vector(n, 0);
 			return false;
@@ -268,7 +268,7 @@ bool solve_lemke(Matrix A, Vector b, Vector & f)
 		//cout << " -- pivoting: leaving index=" << lvindex
 		//	<< "  entering index=" << entering << std::endl;
 	}
-
+	cout << "loop ended" << endl;
 	finish_lemke(A, b, x, f, basis);
 
 	return false;

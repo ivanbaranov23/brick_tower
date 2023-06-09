@@ -2,12 +2,10 @@
   "width": 1000,
   "height": 1000,
 
-  "name": "stack",
+  "name": "stack2",
 
-  "style": 0,
-  "scale": 2.1,
-  "relative_acceleration":1,
-  "rotation":1,
+  "style": 1,
+  "scale": 5.1,
 
   "floor": { 
     "pos": [500, 650], 
@@ -21,7 +19,7 @@
       "mass": 1
     },
     { 
-      "pos": [700, 568], 
+      "pos": [650, 568], 
       "size": [150, 20], 
       "mass": 1
     },

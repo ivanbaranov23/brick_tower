@@ -4,9 +4,9 @@
 
   "name": "default",
 
-  "style": 2,
+  "style": 1,
   "scale": 4.5,
-  "mu": 0.3,
+  "mu": 0.0,
 
   "floor": {
     "pos": [150, 150], 

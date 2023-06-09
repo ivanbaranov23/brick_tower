@@ -34,7 +34,7 @@ struct Dynamic_box: public Box
 
 	void add_force(v2 gpos, Force force);
 	void add_force_local_pos(v2 lpos, Force force);
-	Vector get_matrix_row(v2 normal, v2 g_pos);
+	Vector get_matrix_row(v2 normal, v2 g_pos, double rot = 1.0);
 
 	v2 get_total_force();
 	double get_total_rotation();

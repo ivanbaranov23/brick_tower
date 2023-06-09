@@ -29,7 +29,7 @@ void Dynamic_box::add_force_local_pos(v2 lpos, Force force){
 	forces.push_back({ lpos, force });
 }
 
-Vector Dynamic_box::get_matrix_row(v2 normal, v2 g_pos)
+Vector Dynamic_box::get_matrix_row(v2 normal, v2 g_pos, double rot)
 {
 	Vector ans(Force::lengths.size(), 0.0);
 	if (!dynamic)
@@ -46,10 +46,18 @@ Vector Dynamic_box::get_matrix_row(v2 normal, v2 g_pos)
 		
 		double linear = normal.dot(force.direction) / mass;
 
-		double rotation = normal.dot( force_pos.cross(force.direction.cross(local_pos)) ) / moment_inertia;
-		//cout << rotation << endl;
+		v2 torque = force_pos.cross(force.direction);
+		//t = r x F
+		v2 angular_accel = v2();
+		angular_accel.z = torque.z / moment_inertia;
+		//aa = t / I
+
+		//al = aa x r
+		v2 linear_accel_from_rotation = angular_accel.cross(local_pos);
+		double rotation = normal.dot( linear_accel_from_rotation );
+		//cout << rotation << " " << normal.x << " " << normal.y << endl;
 		
-		ans[force.length_id] += linear + rotation;
+		ans[force.length_id] += linear - rotation * rot;
 	}
 	return ans;
 }
@@ -82,7 +90,13 @@ v2 Dynamic_box::get_total_difference_at_corner(int k){
 		
 		v2 linear = force.direction / mass;
 
-		v2 rotation = force_pos.cross(force.direction.cross(local_pos)) / moment_inertia;
+		v2 torque = force_pos.cross(force.direction);
+		//t = r x F
+		v2 angular_accel = torque / moment_inertia;
+		//aa = t / I
+
+		//al = aa x r
+		v2 rotation = angular_accel.cross(local_pos);
 		
 		ans += linear + rotation;
 	}
@@ -101,9 +115,16 @@ v2 Dynamic_box::get_acceleration(v2 gpos){
 		
 		v2 linear = force.direction / mass;
 
-		v2 rotation = force_pos.cross(force.direction.cross(local_pos)) / moment_inertia;
+		v2 torque = force_pos.cross(force.direction);
+		//t = r x F
+		v2 angular_accel = torque / moment_inertia;
+		//aa = t / I
+
+		//al = aa x r
+		v2 linear_accel_from_rotation = angular_accel.cross(local_pos);
+		//double rotation = normal.dot( linear_accel_from_rotation );
 		
-		ans += linear + rotation;
+		ans += linear + linear_accel_from_rotation;
 	}
 	return ans;
 }

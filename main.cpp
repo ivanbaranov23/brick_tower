@@ -24,6 +24,9 @@ struct Config {
 	string name;
 	double scale;
 	vector<int>filter;
+
+	double relative_acceleration;
+	double rotation;
 };
 
 
@@ -92,6 +95,9 @@ void read_input(string file_name, std::vector<Dynamic_box>& boxes, Config& confi
 	config.epsilon = read_with_default(j, "epsilon", 1.0);
 	config.delta = read_with_default(j, "delta", 0.1);
 
+	config.relative_acceleration = read_with_default(j, "relative_acceleration", 1.0);
+	config.rotation = read_with_default(j, "rotation", 1.0);
+
 
 	if ((j.find("filter") != j.end()) && (j["filter"].size() != 0)) {
 		for (json::iterator it = j["filter"].begin(); it != j["filter"].end(); ++it) {
@@ -123,14 +129,14 @@ void try_configuration(Config &config, vector<Dynamic_box>& boxes){
 				if (boxes[i].corners[k].id != -1) {
 					Dynamic_box* collider = boxes[i].corners[k].colliding;
 					v2 normal = boxes[i].corners[k].normal;
-					Vector this_box_row = boxes[i].get_matrix_row(normal, boxes[i].corners[k].global());
-					Vector other_box_row = collider->get_matrix_row(normal, boxes[i].corners[k].global());
+					Vector this_box_row = boxes[i].get_matrix_row(normal, boxes[i].corners[k].global(), config.rotation);
+					Vector other_box_row = collider->get_matrix_row(normal, boxes[i].corners[k].global(), config.rotation);
 
-					A.set_row(boxes[i].corners[k].id, this_box_row - other_box_row);
+					A.set_row(boxes[i].corners[k].id, this_box_row - other_box_row * config.relative_acceleration);
 					//A.set_friction_row(boxes[i].corners[k].id + 1, config.mu);
 					b[boxes[i].corners[k].id] = normal.dot(gravity_v);
 					if (collider->dynamic)
-						b[boxes[i].corners[k].id] -= normal.dot(gravity_v);
+						b[boxes[i].corners[k].id] -= normal.dot(gravity_v) * config.relative_acceleration;
 				}
 			}
 		}
