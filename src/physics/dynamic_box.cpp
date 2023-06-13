@@ -4,16 +4,13 @@
 #include "../utilities.h"
 
 
-v2 Box_corner::global(){
-	return parent->to_global(local_pos);
-}
-
 
 Dynamic_box::Dynamic_box(Box b, double m) :Box(b), mass(m) {
 	moment_inertia = mass / 12.0 * size.length_squared();
 
 	for (int i = 0; i < 4; i++) {
 		corners[i] = { size * (-0.5) + (rect_corners[i] * size), this };
+		corners[i].global = pos + (size * (-0.5) + (rect_corners[i] * size)).rotated(rotation);
 	}
 }
 
@@ -22,7 +19,7 @@ Dynamic_box::~Dynamic_box()
 }
 
 void Dynamic_box::add_force(v2 gpos, Force force){
-	v2 lpos = (gpos - pos).rotated(-rotation);
+	v2 lpos = to_local(gpos);
 	forces.push_back({ lpos, force });
 }
 void Dynamic_box::add_force_local_pos(v2 lpos, Force force){
@@ -46,18 +43,26 @@ Vector Dynamic_box::get_matrix_row(v2 normal, v2 g_pos, double rot)
 		
 		double linear = normal.dot(force.direction) / mass;
 
+		//cout << "force " << force.length_id << endl;
 		v2 torque = force_pos.cross(force.direction);
 		//t = r x F
 		v2 angular_accel = v2();
 		angular_accel.z = torque.z / moment_inertia;
 		//aa = t / I
-
+		//cout << "torque " << torque.x << " " << torque.y << " " << torque.z << endl;
 		//al = aa x r
 		v2 linear_accel_from_rotation = angular_accel.cross(local_pos);
 		double rotation = normal.dot( linear_accel_from_rotation );
-		//cout << rotation << " " << normal.x << " " << normal.y << endl;
 		
-		ans[force.length_id] += linear - rotation * rot;
+		//v2 aa = force_pos.cross(force.direction).cross(local_pos) / moment_inertia;
+		//v2 test = force_pos.cross(force.direction).cross(force_pos) / moment_inertia;
+		
+		//cout << normal.dot(aa) << " " << (force_pos.length_squared() - (normal.dot(force_pos))*(normal.dot(force_pos)))/ moment_inertia << endl;
+		//cout << "x " << force_pos.x << " " << local_pos.x << endl;
+		//cout << "y " << force_pos.y << " " << local_pos.y << endl;
+		//cout << normal.dot(test) << endl << endl;
+
+		ans[force.length_id] += linear + rotation * rot;
 	}
 	return ans;
 }

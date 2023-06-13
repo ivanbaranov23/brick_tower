@@ -6,7 +6,7 @@
 
 v2 Box::to_local(v2 v)
 {
-	return (v - pos).rotated(-rotation);;
+	return (v - pos).rotated(-rotation);
 }
 
 v2 Box::to_global(v2 v)

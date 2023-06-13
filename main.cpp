@@ -127,10 +127,11 @@ void try_configuration(Config &config, vector<Dynamic_box>& boxes){
 		for (int i = 0; i < boxes.size(); i++) {
 			for (int k = 0; k < 4; k++) {
 				if (boxes[i].corners[k].id != -1) {
+					//cout << "corner " << boxes[i].corners[k].id << endl;
 					Dynamic_box* collider = boxes[i].corners[k].colliding;
 					v2 normal = boxes[i].corners[k].normal;
-					Vector this_box_row = boxes[i].get_matrix_row(normal, boxes[i].corners[k].global(), config.rotation);
-					Vector other_box_row = collider->get_matrix_row(normal, boxes[i].corners[k].global(), config.rotation);
+					Vector this_box_row = boxes[i].get_matrix_row(normal, boxes[i].corners[k].global, config.rotation);
+					Vector other_box_row = collider->get_matrix_row(normal, boxes[i].corners[k].global, config.rotation);
 
 					A.set_row(boxes[i].corners[k].id, this_box_row - other_box_row * config.relative_acceleration);
 					//A.set_friction_row(boxes[i].corners[k].id + 1, config.mu);
@@ -277,6 +278,8 @@ int main(int argc, char* argv[])
 		im.draw_rect(boxes[i], colors[i % 5]);
 
 	v2 total_force;
+	v2 rotation_centre;
+	double rotation;
 	cout << endl;
 	for (int i = 0; i < boxes.size(); i++)
 	{
@@ -289,16 +292,11 @@ int main(int argc, char* argv[])
 
 		switch (config.style) {
 		case 0:
-			/*im.draw_arrow(
-					boxes[i].pos,
-					boxes[i].pos + gravity_v * boxes[i].mass * config.scale,
-					2.0
-			);*/
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
 				v2 g = boxes[i].to_global(boxes[i].forces[j].first);
 				im.draw_arrow(
 					g,
-					g + boxes[i].forces[j].second.get() * 30.0,
+					g + boxes[i].forces[j].second.get() * config.scale,
 					2.0
 				);
 				//cout << boxes[i].forces[j].second.direction.x << " " << boxes[i].forces[j].second.direction.y << endl;
@@ -306,10 +304,22 @@ int main(int argc, char* argv[])
 			break;
 		case 1:
 			total_force = v2();// gravity_v * boxes[i].mass;
+			rotation = boxes[i].get_total_rotation();
 			for (int j = 0; j < boxes[i].forces.size(); j++) {
 				total_force += boxes[i].forces[j].second.get();
 			}
 			im.draw_arrow(boxes[i].pos, boxes[i].pos + total_force * config.scale, 3.0);
+
+			rotation_centre = v2(-total_force.y, total_force.x) / boxes[i].mass / rotation;
+
+			im.draw_rect( {boxes[i].pos + rotation_centre, v2(6.0, 6.0)}, {128, 128, 128} );
+			im.draw_arrow(
+				boxes[i].pos + rotation_centre + v2(24.0, 0), boxes[i].pos + rotation_centre + v2(24.0, 0) + v2(0, 1) * double(int(rotation >= 1e-7) - int(rotation <= -1e-7)) * 24.0,
+				3.0,
+				{128, 128, 128}
+				
+				);
+
 			cout << i << "th box total force " << total_force.x << " " << total_force.y << endl; 
 			break;
 		case 2:

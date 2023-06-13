@@ -15,7 +15,7 @@ struct Box_corner {
 	v2 normal = v2();
 	int id = -1;
 	
-	v2 global();
+	v2 global = v2();
 };
 
 struct Dynamic_box: public Box

@@ -13,7 +13,7 @@ void Adv_image::fill(Pixel p){
 	}
 }
 
-void Adv_image::draw_rect(Box& b, Pixel p){
+void Adv_image::draw_rect(Box b, Pixel p){
 	Box AABB = b.get_AABB();
 	int left = std::max(AABB.pos.x - AABB.size.x / 2 - 1, 0.0);
 	int right = std::min(AABB.pos.x + AABB.size.x / 2 + 1, double(w));
@@ -62,7 +62,7 @@ void Adv_image::draw_line(v2 p1, v2 p2, double width, Pixel p)
 
 
 void Adv_image::draw_arrow(v2 p1, v2 p2, double width, Pixel p) {
-	Box b(p1, v2(8, 8));
+	Box b(p1, v2(width + 1, width + 1));
 	draw_rect(b, p);
 
 	v2 dir = p2 - p1;
